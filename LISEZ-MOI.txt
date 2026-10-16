@@ -1,4 +1,4 @@
-Vibratech v18.6
+Vibratech v18.8
 
 Remplacez les fichiers du site GitHub par le contenu de cette archive (pas le ZIP lui-même). Gardez index.html à la racine.
 
@@ -7,3 +7,5 @@ Client : saisie libre acceptée. Cliquez sur « Utiliser ce nom » pour confirme
 iPhone : « Partager / imprimer le PDF » ouvre le partage du PDF lorsque disponible. Choisissez Imprimer, ou enregistrez dans Fichiers puis Partager > Imprimer.
 
 Les rapports restent locaux à chaque appareil : cette version ne configure pas de synchronisation automatique.
+
+Signature : cadre de 300 pixels. Confirmer la signature bloque l’écriture sans enregistrer le rapport dans l’historique. Effacer la signature vide le cadre et débloque l’écriture pour recommencer. Le verrouillage est conservé avec le brouillon ou le rapport enregistré.
