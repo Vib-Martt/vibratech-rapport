@@ -1,4 +1,4 @@
-Vibratech v19.2 — synchronisation privée
+Vibratech v19.3 — synchronisation privée
 
 INSTALLATION
 Décompressez le ZIP et téléversez tout son contenu à la racine du dépôt GitHub, puis Commit changes. Le fichier cloud-sync.js doit être présent au même niveau que index.html.
@@ -18,3 +18,5 @@ VALIDATION
 Tests simulés : connexion, échange entre deux appareils, rapports et clients, conservation des conflits, reprise après panne réseau et propagation des suppressions. JavaScript vérifié. Le serveur refuse la lecture anonyme (HTTP 401). Le test réel iPhone/Mac reste à effectuer après installation.
 
 Téléphone : tirets automatiques pendant la saisie (111-222-3333), dans les coordonnées chargées et dans les rapports exportés. Les numéros contenant un poste sont conservés.
+
+PDF : coordonnées réorganisées en deux colonnes selon la disposition demandée.
