@@ -1,4 +1,9 @@
-Vibratech v19.3 — synchronisation privée
+VERSION 19.4
+Courriel du contact conservé et affiché au PDF.
+Signature à gauche du signataire et de la date.
+Matériaux utilisés avant les heures dans le PDF.
+
+Vibratech v19.4 — synchronisation privée
 
 INSTALLATION
 Décompressez le ZIP et téléversez tout son contenu à la racine du dépôt GitHub, puis Commit changes. Le fichier cloud-sync.js doit être présent au même niveau que index.html.
