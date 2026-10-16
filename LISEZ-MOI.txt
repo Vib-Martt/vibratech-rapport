@@ -1,10 +1,10 @@
-Vibratech v19.0 — synchronisation privée
+Vibratech v19.1 — synchronisation privée
 
 INSTALLATION
 Décompressez le ZIP et téléversez tout son contenu à la racine du dépôt GitHub, puis Commit changes. Le fichier cloud-sync.js doit être présent au même niveau que index.html.
 
 CONNEXION
-Dans le panneau Synchronisation, utilisez le courriel et le mot de passe de l’utilisateur créé dans Authentication > Users de votre projet Supabase. Utilisez le même compte sur les trois appareils. Aucun mot de passe n’est inclus dans ce fichier.
+Dans l’onglet Synchronisation (à côté d’Historique), utilisez le courriel et le mot de passe de l’utilisateur créé dans Authentication > Users de votre projet Supabase. Utilisez le même compte sur les trois appareils. Aucun mot de passe n’est inclus dans ce fichier.
 
 Les rapports ayant un client ou une référence sont sauvegardés pendant la saisie et envoyés automatiquement après connexion. Le répertoire de clients est également synchronisé. Les signatures, leur verrouillage et les photos font partie du rapport synchronisé. Les fichiers PDF exportés dans Fichiers ne sont pas synchronisés : le rapport permet de les recréer.
 
