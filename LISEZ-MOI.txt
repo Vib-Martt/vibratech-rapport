@@ -1,11 +1,18 @@
-Vibratech v18.8
+Vibratech v19.0 — synchronisation privée
 
-Remplacez les fichiers du site GitHub par le contenu de cette archive (pas le ZIP lui-même). Gardez index.html à la racine.
+INSTALLATION
+Décompressez le ZIP et téléversez tout son contenu à la racine du dépôt GitHub, puis Commit changes. Le fichier cloud-sync.js doit être présent au même niveau que index.html.
 
-Client : saisie libre acceptée. Cliquez sur « Utiliser ce nom » pour confirmer un nouveau nom. Les suggestions restent facultatives.
+CONNEXION
+Dans le panneau Synchronisation, utilisez le courriel et le mot de passe de l’utilisateur créé dans Authentication > Users de votre projet Supabase. Utilisez le même compte sur les trois appareils. Aucun mot de passe n’est inclus dans ce fichier.
 
-iPhone : « Partager / imprimer le PDF » ouvre le partage du PDF lorsque disponible. Choisissez Imprimer, ou enregistrez dans Fichiers puis Partager > Imprimer.
+Les rapports ayant un client ou une référence sont sauvegardés pendant la saisie et envoyés automatiquement après connexion. Le répertoire de clients est également synchronisé. Les signatures, leur verrouillage et les photos font partie du rapport synchronisé. Les fichiers PDF exportés dans Fichiers ne sont pas synchronisés : le rapport permet de les recréer.
 
-Les rapports restent locaux à chaque appareil : cette version ne configure pas de synchronisation automatique.
+Les modifications hors ligne restent sur l’appareil jusqu’au retour du réseau. Gardez l’application ouverte jusqu’au message Synchronisé avant de passer à un autre appareil. Les listes sont actualisées toutes les 30 secondes et au retour dans l’application. Un rapport déjà ouvert n’est pas remplacé pendant la saisie : rouvrez-le depuis l’historique pour charger la version reçue.
 
-Signature : cadre de 300 pixels. Confirmer la signature bloque l’écriture sans enregistrer le rapport dans l’historique. Effacer la signature vide le cadre et débloque l’écriture pour recommencer. Le verrouillage est conservé avec le brouillon ou le rapport enregistré.
+En cas de modifications concurrentes, une copie à vérifier conserve le travail local. Une suppression ancienne ne détruit pas une version modifiée ailleurs. Les suppressions se propagent entre appareils après synchronisation. Les brouillons sans client ni référence restent locaux.
+
+La déconnexion conserve les copies locales sur cet appareil. Chaque navigateur est associé au premier compte utilisé pour empêcher le mélange avec un autre compte.
+
+VALIDATION
+Tests simulés : connexion, échange entre deux appareils, rapports et clients, conservation des conflits, reprise après panne réseau et propagation des suppressions. JavaScript vérifié. Le serveur refuse la lecture anonyme (HTTP 401). Le test réel iPhone/Mac reste à effectuer après installation.
