@@ -1,0 +1,9 @@
+VIBRATECH v18.5 — INSTALLATION DE TEST
+
+1. Ne pas ouvrir index.html en aperçu sur iPhone : la PWA nécessite un hébergement HTTPS.
+2. Publier le contenu complet de ce dossier sur un hébergement HTTPS (ex. Netlify).
+3. Sur iPhone, ouvrir l’URL HTTPS avec Safari, puis Partager > Sur l’écran d’accueil > Ajouter.
+4. Ouvrir l’application une première fois avec Internet et attendre le chargement complet.
+5. Tester le mode avion, les champs, la signature, les photos, les PDF et l’historique avec des données fictives.
+
+ATTENTION : aucune synchronisation entre appareils dans cette version. Les données sont stockées localement dans le navigateur/appareil et peuvent disparaître si les données du site sont effacées. Faire des exports de sauvegarde et ne pas utiliser de données clients réelles pendant les tests. Les données de la version HTML ouverte en file:// ne sont pas transférées automatiquement à la PWA hébergée.

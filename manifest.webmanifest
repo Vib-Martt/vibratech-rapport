@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Vibratech — Rapport de visite",
+  "short_name": "Vibratech",
+  "description": "Rapports de visite Vibratech",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f5f3",
+  "theme_color": "#007e60",
+  "lang": "fr-CA",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
