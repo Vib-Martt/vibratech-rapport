@@ -1,4 +1,4 @@
-const CACHE = 'vibratech-v18-5-static-v1';
+const CACHE = 'vibratech-v18-6-static-v1';
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install', event => {
  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
