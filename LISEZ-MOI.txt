@@ -1,3 +1,9 @@
+VERSION 19.6
+Texte Signataire / Date à gauche, signature immédiatement à droite.
+
+VERSION 19.5
+Nom du client obligatoire avant enregistrement, impression ou téléchargement PDF.
+
 VERSION 19.4
 Courriel du contact conservé et affiché au PDF.
 Signature à gauche du signataire et de la date.
