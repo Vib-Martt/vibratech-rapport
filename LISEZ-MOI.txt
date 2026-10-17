@@ -1,3 +1,11 @@
+COPIE STRUCTURÉE DE LA VERSION 19.6 — À TESTER
+
+Consultez STRUCTURE.md pour les nouveaux fichiers et les vérifications effectuées.
+L’original est conservé. Cette copie n’a pas été publiée.
+Pour installer cette copie, inclure les dossiers css/ et js/ avec tous les autres fichiers.
+
+--- NOTES DE LA VERSION ORIGINALE (historique fourni, non revérifié ici) ---
+
 VERSION 19.6
 Texte Signataire / Date à gauche, signature immédiatement à droite.
 
