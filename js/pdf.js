@@ -40,16 +40,15 @@ async function generate(){
  heading('HEURES ET DÉPLACEMENTS');
  // Les heures affichées proviennent de chaque journée, sans recalcul approximatif.
  for(let i=0;i<d.days.length;i++){
-  const day=d.days[i],dt=dayTotals(day),clock=v=>/^\d{2}:\d{2}$/.test(v||'')?v:'—';
-  ensure(82);
+  const day=d.days[i],clock=v=>/^\d{2}:\d{2}$/.test(v||'')?v:'—';
+  ensure(69);
   rect(LEFT,y,CONTENT,30,pale);
   txt('JOURNÉE '+(i+1)+' — '+(day.date||'Sans date'),LEFT+10,y+21,18,true,green);y+=36;
   // Quatre heures sur une seule ligne pour économiser l'espace du rapport PDF.
   const moments=[['Départ Vbt',day.departVbt],['Arrivée client',day.arriveeClient],['Départ client',day.departClient],['Retour Vbt',day.arriveeVbt]];
   moments.forEach(([label,time],j)=>txt(label+' : '+clock(time),LEFT+12+j*(CONTENT-24)/4,y+20,15));
   y+=27;
-  txt('Chez client : '+fmt(dt.onsite)+'     Déplacement : '+fmt(dt.travel)+'     Km : '+(day.km||'0'),LEFT+12,y+21,17);
-  y+=33;rule(y);y+=6;
+  rule(y);y+=6;
  }
  const all=totalDays(d.days);
  twoFields([['TOTAL — Temps chez le client',fmt(all.onsite)],['TOTAL — Déplacement / km',fmt(all.travel)+' / '+all.km+' km']]);

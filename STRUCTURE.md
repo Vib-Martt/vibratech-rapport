@@ -1,3 +1,5 @@
+> Version 19.8 : modification de la présentation des heures dans js/pdf.js et de l’impression dans js/rapports.js. Voir LISEZ-MOI.txt pour les instructions actuelles. Les notes ci-dessous décrivent les étapes précédentes.
+
 > Mise à jour 19.7 : consulter LISEZ-MOI.txt pour le correctif, les tests actuels et la procédure d’essai. Les notes ci-dessous décrivent la première extraction 19.6. Depuis, cloud-sync.js, les actions de suppression dans rapports.js et clients.js, le numéro de version et le nom du cache ont été modifiés.
 
 # Vibratech 19.7 — copie structurée avec correctif de synchronisation

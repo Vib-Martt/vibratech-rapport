@@ -1,31 +1,18 @@
-VIBRATECH 19.7 — CORRECTIF DE SYNCHRONISATION À TESTER
+VIBRATECH 19.8 — PDF : HEURES ET DÉPLACEMENTS
 
-Cette copie n’a pas été publiée par l’assistant. La version 19.6 d’origine et la première copie structurée restent conservées séparément.
+Le résumé « Chez client / Déplacement / Km » est retiré sous chaque journée du PDF.
+Les dates et les quatre heures de départ/arrivée restent visibles pour chaque journée.
+Le total général des heures et kilomètres reste affiché une seule fois en dessous.
+La présentation de l’impression depuis le navigateur suit le même principe.
+Les données saisies, les calculs et la synchronisation 19.7 sont conservés.
 
-CE QUI CHANGE
-Une fiche absente de la liste locale n’est plus considérée automatiquement comme une suppression à transmettre. Seul le bouton Supprimer crée une demande de suppression, conservée jusqu’à la synchronisation. Le message de confirmation précise que la suppression concerne les appareils synchronisés.
+VÉRIFICATION
+Un PDF de démonstration de deux journées a été généré avec le code de cette version et vérifié visuellement. Les quatre heures de chaque journée restent présentes ; les totaux de l’exemple sont 11 h 30 chez le client, 3 h de déplacement et 120 km. La syntaxe des scripts et les fichiers du cache ont aussi été vérifiés. Le fichier cloud-sync.js est identique à celui de la version 19.7 validée par l’utilisateur.
+Le PDF de démonstration utilise un moteur de dessin local ; le rendu des polices peut varier légèrement dans Safari ou sur iPhone.
 
-La réunion des fiches distinctes, les copies de conflit et le contrôle des révisions sont conservés. Les écrans, les PDF et les clés des données existantes restent inchangés, sauf le numéro de version et les confirmations de suppression.
-
-DIAGNOSTIC
-Un test sur le code 19.6 a reproduit ce scénario : un appareil garde la mémoire d’une synchronisation passée mais perd sa liste locale ; la synchronisation transmet alors des suppressions aux autres appareils. Le même test passe avec le correctif. Cela établit un défaut réel, sans prouver que c’est la cause exacte de l’incident signalé : aucune inspection des données privées des appareils ou du serveur n’a été faite.
-
-VÉRIFICATIONS
-12 scénarios simulés passent : réunion de données distinctes, absence locale, suppression explicite, modifications concurrentes, suppression ancienne contre modification récente, modification pendant un envoi, panne réseau, demande conservée après réouverture, stockage saturé, suppression distante contre modification locale, annulation d’une suppression échouée et pagination du serveur.
-Syntaxe et ressources du cache vérifiées ; fonctionnement du cache simulé.
-Ouverture dans le navigateur, création et suppression d’une fiche fictive vérifiées, sans connexion au service de synchronisation réel.
-La synchronisation réelle Mac/iPhone reste à tester après mise à jour de tous les appareils.
-
-INSTALLATION ET ESSAI AVEC LES DONNÉES FICTIVES
-1. Fermer Vibratech sur tous les appareils pendant le remplacement des fichiers sur GitHub.
-2. Envoyer tout le contenu de ce dossier décompressé, y compris css/ et js/, au même endroit que l’ancien index.html. Ne pas envoyer seulement le ZIP.
-3. Attendre la publication GitHub Pages, puis rouvrir/recharger l’application sur chaque appareil. L’onglet Synchronisation doit afficher v19.7 partout. Une ancienne version peut encore transmettre des suppressions : ne pas poursuivre l’essai tant qu’un appareil affiche v19.6.
-4. Se connecter au même compte et attendre une première synchronisation terminée sur chaque appareil.
-5. Mettre les appareils hors ligne. Sur le Mac, créer une fiche « Essai Mac 19.7 » et un rapport enregistré correspondant. Sur l’iPhone, créer une fiche « Essai iPhone 19.7 » et un autre rapport enregistré.
-6. Reconnecter, synchroniser le Mac puis l’iPhone, puis de nouveau le Mac. Les deux fiches et les deux rapports doivent être présents sur chacun.
-7. Modifier ensuite un rapport sur un appareil et vérifier sa réception sur l’autre. Tester aussi une suppression volontaire d’une fiche fictive : elle doit se propager après confirmation.
-
-Cette mise à jour ne restaure pas les données déjà supprimées. Ne pas effacer les données du navigateur pour mettre à jour.
-
-LIMITES
-Les tests du serveur utilisent une simulation, pas le compte réel ni les règles du serveur. Le correctif ne prétend pas couvrir toutes les causes possibles de perte ou tous les usages simultanés de plusieurs onglets sur le même appareil. Le transfert des photos entre appareils n’a pas été modifié ou validé par ce correctif.
+INSTALLATION
+Conserver la version 19.7 en sauvegarde. Fermer Vibratech pendant la mise à jour.
+Décompresser le ZIP et remplacer sur GitHub tout le contenu de l’application, en conservant les dossiers css/ et js/.
+Après publication, rouvrir/recharger Vibratech sur le Mac et l’iPhone. L’onglet Synchronisation doit afficher v19.8.
+Créer un PDF pour vérifier le résultat sur chaque appareil. Les données des rapports existants ne sont pas modifiées ; générer à nouveau le PDF d’un rapport pour obtenir la nouvelle présentation.
+Cette copie n’a pas été publiée par l’assistant.
