@@ -1,4 +1,6 @@
-# Vibratech 19.6 — copie structurée
+> Mise à jour 19.7 : consulter LISEZ-MOI.txt pour le correctif, les tests actuels et la procédure d’essai. Les notes ci-dessous décrivent la première extraction 19.6. Depuis, cloud-sync.js, les actions de suppression dans rapports.js et clients.js, le numéro de version et le nom du cache ont été modifiés.
+
+# Vibratech 19.7 — copie structurée avec correctif de synchronisation
 
 Cette copie réorganise les fichiers de la version 19.6 fournie, sans changement volontaire du visuel ou des fonctions. L’archive d’origine reste intacte. Cette copie n’a pas été publiée.
 

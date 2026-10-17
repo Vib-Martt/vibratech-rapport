@@ -1,41 +1,31 @@
-COPIE STRUCTURÉE DE LA VERSION 19.6 — À TESTER
+VIBRATECH 19.7 — CORRECTIF DE SYNCHRONISATION À TESTER
 
-Consultez STRUCTURE.md pour les nouveaux fichiers et les vérifications effectuées.
-L’original est conservé. Cette copie n’a pas été publiée.
-Pour installer cette copie, inclure les dossiers css/ et js/ avec tous les autres fichiers.
+Cette copie n’a pas été publiée par l’assistant. La version 19.6 d’origine et la première copie structurée restent conservées séparément.
 
---- NOTES DE LA VERSION ORIGINALE (historique fourni, non revérifié ici) ---
+CE QUI CHANGE
+Une fiche absente de la liste locale n’est plus considérée automatiquement comme une suppression à transmettre. Seul le bouton Supprimer crée une demande de suppression, conservée jusqu’à la synchronisation. Le message de confirmation précise que la suppression concerne les appareils synchronisés.
 
-VERSION 19.6
-Texte Signataire / Date à gauche, signature immédiatement à droite.
+La réunion des fiches distinctes, les copies de conflit et le contrôle des révisions sont conservés. Les écrans, les PDF et les clés des données existantes restent inchangés, sauf le numéro de version et les confirmations de suppression.
 
-VERSION 19.5
-Nom du client obligatoire avant enregistrement, impression ou téléchargement PDF.
+DIAGNOSTIC
+Un test sur le code 19.6 a reproduit ce scénario : un appareil garde la mémoire d’une synchronisation passée mais perd sa liste locale ; la synchronisation transmet alors des suppressions aux autres appareils. Le même test passe avec le correctif. Cela établit un défaut réel, sans prouver que c’est la cause exacte de l’incident signalé : aucune inspection des données privées des appareils ou du serveur n’a été faite.
 
-VERSION 19.4
-Courriel du contact conservé et affiché au PDF.
-Signature à gauche du signataire et de la date.
-Matériaux utilisés avant les heures dans le PDF.
+VÉRIFICATIONS
+12 scénarios simulés passent : réunion de données distinctes, absence locale, suppression explicite, modifications concurrentes, suppression ancienne contre modification récente, modification pendant un envoi, panne réseau, demande conservée après réouverture, stockage saturé, suppression distante contre modification locale, annulation d’une suppression échouée et pagination du serveur.
+Syntaxe et ressources du cache vérifiées ; fonctionnement du cache simulé.
+Ouverture dans le navigateur, création et suppression d’une fiche fictive vérifiées, sans connexion au service de synchronisation réel.
+La synchronisation réelle Mac/iPhone reste à tester après mise à jour de tous les appareils.
 
-Vibratech v19.4 — synchronisation privée
+INSTALLATION ET ESSAI AVEC LES DONNÉES FICTIVES
+1. Fermer Vibratech sur tous les appareils pendant le remplacement des fichiers sur GitHub.
+2. Envoyer tout le contenu de ce dossier décompressé, y compris css/ et js/, au même endroit que l’ancien index.html. Ne pas envoyer seulement le ZIP.
+3. Attendre la publication GitHub Pages, puis rouvrir/recharger l’application sur chaque appareil. L’onglet Synchronisation doit afficher v19.7 partout. Une ancienne version peut encore transmettre des suppressions : ne pas poursuivre l’essai tant qu’un appareil affiche v19.6.
+4. Se connecter au même compte et attendre une première synchronisation terminée sur chaque appareil.
+5. Mettre les appareils hors ligne. Sur le Mac, créer une fiche « Essai Mac 19.7 » et un rapport enregistré correspondant. Sur l’iPhone, créer une fiche « Essai iPhone 19.7 » et un autre rapport enregistré.
+6. Reconnecter, synchroniser le Mac puis l’iPhone, puis de nouveau le Mac. Les deux fiches et les deux rapports doivent être présents sur chacun.
+7. Modifier ensuite un rapport sur un appareil et vérifier sa réception sur l’autre. Tester aussi une suppression volontaire d’une fiche fictive : elle doit se propager après confirmation.
 
-INSTALLATION
-Décompressez le ZIP et téléversez tout son contenu à la racine du dépôt GitHub, puis Commit changes. Le fichier cloud-sync.js doit être présent au même niveau que index.html.
+Cette mise à jour ne restaure pas les données déjà supprimées. Ne pas effacer les données du navigateur pour mettre à jour.
 
-CONNEXION
-Dans l’onglet Synchronisation (à côté d’Historique), utilisez le courriel et le mot de passe de l’utilisateur créé dans Authentication > Users de votre projet Supabase. Utilisez le même compte sur les trois appareils. Aucun mot de passe n’est inclus dans ce fichier.
-
-Les rapports ayant un client ou une référence sont sauvegardés pendant la saisie et envoyés automatiquement après connexion. Le répertoire de clients est également synchronisé. Les signatures, leur verrouillage et les photos font partie du rapport synchronisé. Les fichiers PDF exportés dans Fichiers ne sont pas synchronisés : le rapport permet de les recréer.
-
-Les modifications hors ligne restent sur l’appareil jusqu’au retour du réseau. Gardez l’application ouverte jusqu’au message Synchronisé avant de passer à un autre appareil. Les listes sont actualisées toutes les 30 secondes et au retour dans l’application. Un rapport déjà ouvert n’est pas remplacé pendant la saisie : rouvrez-le depuis l’historique pour charger la version reçue.
-
-En cas de modifications concurrentes, une copie à vérifier conserve le travail local. Une suppression ancienne ne détruit pas une version modifiée ailleurs. Les suppressions se propagent entre appareils après synchronisation. Les brouillons sans client ni référence restent locaux.
-
-La déconnexion conserve les copies locales sur cet appareil. Chaque navigateur est associé au premier compte utilisé pour empêcher le mélange avec un autre compte.
-
-VALIDATION
-Tests simulés : connexion, échange entre deux appareils, rapports et clients, conservation des conflits, reprise après panne réseau et propagation des suppressions. JavaScript vérifié. Le serveur refuse la lecture anonyme (HTTP 401). Le test réel iPhone/Mac reste à effectuer après installation.
-
-Téléphone : tirets automatiques pendant la saisie (111-222-3333), dans les coordonnées chargées et dans les rapports exportés. Les numéros contenant un poste sont conservés.
-
-PDF : coordonnées réorganisées en deux colonnes selon la disposition demandée.
+LIMITES
+Les tests du serveur utilisent une simulation, pas le compte réel ni les règles du serveur. Le correctif ne prétend pas couvrir toutes les causes possibles de perte ou tous les usages simultanés de plusieurs onglets sur le même appareil. Le transfert des photos entre appareils n’a pas été modifié ou validé par ce correctif.

@@ -1,9 +1,9 @@
-/* Vibratech v19 — authenticated REST sync, durable local queue, revision checks. */
+/* Vibratech v19.7 — explicit deletion journal; absence is never a deletion. */
 (()=>{
 'use strict';
 const URL_BASE='https://khpwmaunxituqzsvpsmq.supabase.co';
 const API_KEY='sb_publishable_Gv-OT7sg5VwGnMHyCkBMXA_RMqMtXRX';
-const AUTH_KEY='vbt_cloud_session_v19',OWNER_KEY='vbt_cloud_owner_v19',META_KEY='vbt_cloud_meta_v19';
+const AUTH_KEY='vbt_cloud_session_v19',OWNER_KEY='vbt_cloud_owner_v19',META_KEY='vbt_cloud_meta_v19',DELETIONS_KEY='vbt_cloud_deletions_v19_7';
 const $=id=>document.getElementById(id),clone=x=>JSON.parse(JSON.stringify(x));
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}};
 let session=read(AUTH_KEY,null),meta=read(META_KEY,{}),busy=false,timer,refreshPromise=null;
@@ -36,10 +36,30 @@ async function token(){
 function filter(item){const p=new URLSearchParams({user_id:'eq.'+session.user.id,kind:'eq.'+item.kind,id:'eq.'+item.id});return p}
 async function listRemote(){const rows=[];for(let offset=0;;offset+=200){const q=new URLSearchParams({user_id:'eq.'+session.user.id,select:'*',order:'kind.asc,id.asc',limit:'200',offset:String(offset)});const batch=await raw('/rest/v1/vibratech_items?'+q);rows.push(...batch);if(batch.length<200)break}return rows}
 function same(remote,desired){return remote.deleted===desired.deleted&&(remote.deleted||canonical(remote.data)===canonical(desired.data))}
-function desiredItems(){const current=new Map(localItems().map(x=>[keyOf(x),{...x,deleted:false}]));for(const [k,m]of Object.entries(meta)){if(!current.has(k))current.set(k,{kind:m.kind,id:m.id,data:{},deleted:true})}return current}
-function acknowledge(remote){meta[keyOf(remote)]={kind:remote.kind,id:remote.id,revision:remote.revision,base:remote.deleted?null:canonical(remote.data)};persistMeta()}
+// Missing local data can mean an incomplete/stale local list, not user intent.
+// Only the application's explicit Delete actions may enqueue a cloud deletion.
+function pendingDeletions(){return read(DELETIONS_KEY,{})}
+function deleted(kind,id){
+ if(!['rapport','client'].includes(kind)||typeof id!=='string')throw Error('Suppression invalide.');
+ const pending=pendingDeletions(),k=kind+':'+id;
+ pending[k]={kind,id};
+ try{localStorage.setItem(DELETIONS_KEY,JSON.stringify(pending));return true}
+ catch(e){status('Suppression annulée : impossible de conserver la demande sur cet appareil.');return false}
+}
+function clearDeletion(k){
+ const pending=pendingDeletions();
+ if(Object.prototype.hasOwnProperty.call(pending,k)){delete pending[k];localStorage.setItem(DELETIONS_KEY,JSON.stringify(pending))}
+}
+function desiredItems(){
+ const current=new Map(localItems().map(x=>[keyOf(x),{...x,deleted:false}]));
+ for(const [k,item]of Object.entries(pendingDeletions())){
+  if(!current.has(k))current.set(k,{kind:item.kind,id:item.id,data:{},deleted:true});
+ }
+ return current;
+}
+function acknowledge(remote){if(remote.deleted)clearDeletion(keyOf(remote));meta[keyOf(remote)]={kind:remote.kind,id:remote.id,revision:remote.revision,base:remote.deleted?null:canonical(remote.data)};persistMeta()}
 function localChanged(desired,m){return !m?!desired.deleted:(desired.deleted?m.base!==null:canonical(desired.data)!==m.base)}
-function adopt(remote){putLocal(remote.kind,remote.id,remote.deleted?null:remote.data);acknowledge(remote)}
+function adopt(remote){putLocal(remote.kind,remote.id,remote.deleted?null:remote.data);clearDeletion(keyOf(remote));acknowledge(remote)}
 function preserveConflict(desired){
  if(desired.deleted)return; // A stale deletion never destroys a newer remote version.
  const newId=desired.id+'-copie-'+(globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(36).slice(2));
@@ -91,7 +111,7 @@ async function sync(){
  finally{busy=false;$('cloudSync').disabled=false}
 }
 function changed(){clearTimeout(timer);if(session)timer=setTimeout(sync,1200)}
-window.VBTCloud={changed};
+window.VBTCloud={changed,deleted,cancelDeletion:(kind,id)=>clearDeletion(kind+':'+id)};
 $('cloudLogin').addEventListener('submit',async e=>{
  e.preventDefault();$('cloudConnect').disabled=true;
  try{
