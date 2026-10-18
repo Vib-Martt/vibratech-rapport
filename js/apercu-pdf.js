@@ -43,7 +43,9 @@
    zoom.disabled=false;
   }catch(error){
    if(current===generation){
-    status.textContent='Impossible de préparer l’aperçu. Fermez cette fenêtre et réessayez.';
+    status.textContent=error?.code==='PHOTO_UNAVAILABLE'
+     ? 'Aperçu indisponible : '+error.message
+     : 'Impossible de préparer l’aperçu. Fermez cette fenêtre et réessayez.';
     if(!dialog.open)alert(status.textContent);
     console.error(error);
    }

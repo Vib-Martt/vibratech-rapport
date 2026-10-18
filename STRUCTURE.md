@@ -1,3 +1,7 @@
+> Version 19.13 : saisie numérique des quantités dans js/rapports.js ; bloc signataire, date et signature déplacé à droite dans js/pdf.js.
+
+> Version 19.12 : erreur explicite pour les photos absentes sur cet appareil, dans js/photos.js et js/apercu-pdf.js. La synchronisation des images reste à ajouter.
+
 > Version 19.11 : aperçu sans enregistrement dans js/apercu-pdf.js, accès aux pages du générateur dans js/pdf.js, Précédent masqué à l’étape Client dans js/etapes-rapport.js. Fenêtre et styles ajoutés à index.html et css/application.css. Instructions actuelles dans LISEZ-MOI.txt.
 
 > Version 19.10 : organisation des onglets et du répertoire. Modifications dans index.html, css/application.css, js/clients.js, js/navigation.js, js/recherche-clients.js et retour au champ client depuis la validation dans js/rapports.js. Instructions actuelles dans LISEZ-MOI.txt.

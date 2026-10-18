@@ -1,18 +1,10 @@
-VIBRATECH 19.11 — APERÇU AVANT SIGNATURE
+VIBRATECH 19.13 — QUANTITÉS ET SIGNATURE
 
-Le bouton Précédent est masqué uniquement à la première étape Client. Il reste disponible aux étapes suivantes.
-Dans Signer, le bouton « Visualiser le PDF avant signature » ouvre les mêmes pages que le PDF final dans une fenêtre de consultation. Le bouton Agrandir facilite la lecture et « Retour à la signature » ferme l’aperçu.
-L’aperçu ne télécharge pas de fichier, ne termine pas le rapport, n’enregistre pas de rapport dans l’historique et ne déclenche pas de synchronisation. La sauvegarde habituelle du brouillon pendant la saisie reste active. Un rapport déjà enregistré conserve son état existant.
-Pour enregistrer le rapport terminé et télécharger le PDF signé, utiliser le bouton habituel une fois la signature recueillie.
-
-VÉRIFICATIONS
-Contrôles dans le navigateur : Précédent absent à l’étape Client, aperçu sans signature, agrandissement, retour au formulaire et affichage à une largeur de 390 pixels.
-Tests ciblés : aucun enregistrement ni téléchargement déclenché par l’aperçu, état du rapport inchangé, validation du client, fermeture pendant la génération, erreur de génération, navigation et action finale de la dernière étape.
-Génération réelle des pages vérifiée sur un rapport fictif de deux journées ; calculs et mise en page conservés. Syntaxe et ressources du cache vérifiées.
-Le fonctionnement dans l’application installée sur un véritable iPhone reste à confirmer par l’utilisateur.
+Matériel : les quantités acceptent uniquement les chiffres et un séparateur décimal (virgule ou point), avec un clavier décimal sur mobile. Les données des anciens rapports restent conservées au chargement.
+PDF : le nom du signataire, la date et le cadre de signature sont regroupés vers la marge droite. Le même résultat apparaît dans l’aperçu avant signature.
 
 INSTALLATION
-Conserver la version 19.10 en sauvegarde. Fermer Vibratech pendant la mise à jour.
-Décompresser le ZIP puis remplacer tout le contenu de l’application sur GitHub, y compris css/ et js/. Le nouveau fichier js/apercu-pdf.js doit être inclus.
-Après publication, rouvrir/recharger l’application sur chaque appareil. Synchronisation doit afficher v19.11.
+Conserver la version précédente. Remplacer le contenu de l’application sur GitHub par les fichiers de cette version, y compris js/ et css/.
+Rouvrir/recharger l’application sur chaque appareil et vérifier v19.13 dans Synchronisation. Ne pas effacer les données du navigateur.
 Cette copie n’a pas été publiée par l’assistant.
+Les images ne sont pas encore synchronisées entre appareils.

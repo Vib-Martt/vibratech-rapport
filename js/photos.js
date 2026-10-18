@@ -28,7 +28,11 @@ async function appendPdfPages(o){
  for(let i=0;i<photos.length;i++){
   const p=photos[i];let data=p.data;
   if(!data){const r=await get(p.id);data=r?.data}
-  if(!data)throw new Error('Une photo du rapport est introuvable. Vérifie l’onglet Photos.');
+  if(!data){
+   const error=new Error('La photo '+(i+1)+' du rapport est introuvable sur cet appareil. Les images ne sont pas encore synchronisées entre les appareils. Ouvrez ce rapport dans le navigateur où la photo a été ajoutée, ou remplacez la photo manquante dans l’onglet Photos sur cet appareil.');
+   error.code='PHOTO_UNAVAILABLE';
+   throw error;
+  }
   const im=await o.imageLoad(data);
   if(!pageStarted||slot===2){
    if(pageStarted)o.finishPage();

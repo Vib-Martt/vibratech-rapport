@@ -19,11 +19,19 @@ el('effacerSignature').onclick=()=>{ctx.clearRect(0,0,canvas.width,canvas.height
 function materialRow(quantity='',description=''){
  if(el('materialsRows').children.length>=10){alert('Maximum de 10 matériaux par rapport.');return;}
  const row=document.createElement('div');row.className='material-row';
- const q=document.createElement('input');q.type='text';q.placeholder='Ex. 2';q.setAttribute('aria-label','Quantité');q.value=quantity;
+ const q=document.createElement('input');q.type='text';q.inputMode='decimal';q.pattern='[0-9]+([.,][0-9]+)?';q.placeholder='Ex. 2 ou 2,5';q.setAttribute('aria-label','Quantité');q.value=quantity;
  const d=document.createElement('input');d.type='text';d.placeholder='Ex. Roulement 6310';d.setAttribute('aria-label','Description du matériau');d.value=description;
  const remove=document.createElement('button');remove.type='button';remove.className='danger';remove.textContent='✕';remove.title='Supprimer cette ligne';remove.setAttribute('aria-label','Supprimer ce matériau');
  remove.onclick=()=>{row.remove();if(!el('materialsRows').children.length)materialRow();markDirty()};
- q.addEventListener('input',markDirty);d.addEventListener('input',markDirty);
+ q.addEventListener('beforeinput',event=>{
+  if(event.data&&!/^[0-9.,]+$/.test(event.data))event.preventDefault();
+ });
+ q.addEventListener('input',()=>{
+  let separator=false;
+  q.value=q.value.replace(/[^0-9.,]/g,'').replace(/[.,]/g,ch=>{if(separator)return '';separator=true;return ch});
+  if(/^[.,]/.test(q.value))q.value='0'+q.value;
+  markDirty();
+ });d.addEventListener('input',markDirty);
  row.append(q,d,remove);el('materialsRows').append(row);
 }
 function getMaterials(){return [...el('materialsRows').children].map(r=>({quantity:r.children[0].value,description:r.children[1].value})).filter(m=>m.quantity.trim()||m.description.trim())}
