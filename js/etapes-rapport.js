@@ -27,6 +27,7 @@
    toggle.textContent=all?'Afficher les onglets':'Afficher tout';
    progress.textContent=(current+1)+' / 6';
    prev.disabled=current===0;
+   prev.hidden=current===0;
    updateNext();
    if(scroll){
      // Mesurer un repère NON sticky plutôt que la position du menu sticky.

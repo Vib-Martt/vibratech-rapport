@@ -1,18 +1,18 @@
-VIBRATECH 19.10 — ORGANISATION DES ONGLETS
+VIBRATECH 19.11 — APERÇU AVANT SIGNATURE
 
-NOUVEAUTÉS
-Un onglet « Enregistrer et exporter » se trouve à côté de Synchronisation. Il regroupe : terminer et télécharger le PDF, imprimer le PDF, exporter et importer les rapports, exporter et importer les clients (JSON).
-Dans Rapport > Client, le bouton « Enregistrer ce client dans le répertoire » se trouve à la fin des coordonnées, juste avant Précédent / Suivant.
-Dans Clients, le champ de recherche et les deux grands boutons « Remplir le rapport » et « Enregistrer les coordonnées » sont retirés. Choisir un client dans le menu remplit directement le rapport et ouvre son étape Client. Les fiches avec leurs actions Utiliser / Supprimer restent disponibles.
-Les suggestions de clients dans le formulaire restent actives. Si le remplacement des coordonnées est annulé, le rapport est conservé et la navigation n’est pas déclenchée.
-Le bouton de fin à l’étape Signer conserve l’action de la version 19.9.
+Le bouton Précédent est masqué uniquement à la première étape Client. Il reste disponible aux étapes suivantes.
+Dans Signer, le bouton « Visualiser le PDF avant signature » ouvre les mêmes pages que le PDF final dans une fenêtre de consultation. Le bouton Agrandir facilite la lecture et « Retour à la signature » ferme l’aperçu.
+L’aperçu ne télécharge pas de fichier, ne termine pas le rapport, n’enregistre pas de rapport dans l’historique et ne déclenche pas de synchronisation. La sauvegarde habituelle du brouillon pendant la saisie reste active. Un rapport déjà enregistré conserve son état existant.
+Pour enregistrer le rapport terminé et télécharger le PDF signé, utiliser le bouton habituel une fois la signature recueillie.
 
 VÉRIFICATIONS
-Ouverture et navigation vérifiées dans le navigateur ; création d’un client depuis Rapport, apparition dans le répertoire et sélection directe depuis le menu vérifiées avec des données fictives. Emplacement des six outils contrôlé dans le nouvel onglet. Aucun message d’erreur dans la console lors de ces essais. Test isolé de l’acceptation et de l’annulation du remplacement des coordonnées réussi. Syntaxe et ressources hors ligne vérifiées.
-Le code de synchronisation, le générateur PDF et le bouton final de l’étape Signer sont identiques à la version 19.9. Le test sur iPhone et les transferts réels restent à effectuer après installation.
+Contrôles dans le navigateur : Précédent absent à l’étape Client, aperçu sans signature, agrandissement, retour au formulaire et affichage à une largeur de 390 pixels.
+Tests ciblés : aucun enregistrement ni téléchargement déclenché par l’aperçu, état du rapport inchangé, validation du client, fermeture pendant la génération, erreur de génération, navigation et action finale de la dernière étape.
+Génération réelle des pages vérifiée sur un rapport fictif de deux journées ; calculs et mise en page conservés. Syntaxe et ressources du cache vérifiées.
+Le fonctionnement dans l’application installée sur un véritable iPhone reste à confirmer par l’utilisateur.
 
 INSTALLATION
-Conserver la version 19.9 en sauvegarde. Fermer Vibratech pendant la mise à jour.
-Décompresser le ZIP puis remplacer sur GitHub tout le contenu de l’application, y compris les dossiers css/ et js/.
-Après publication, rouvrir/recharger l’application sur les appareils. Synchronisation doit afficher v19.10.
+Conserver la version 19.10 en sauvegarde. Fermer Vibratech pendant la mise à jour.
+Décompresser le ZIP puis remplacer tout le contenu de l’application sur GitHub, y compris css/ et js/. Le nouveau fichier js/apercu-pdf.js doit être inclus.
+Après publication, rouvrir/recharger l’application sur chaque appareil. Synchronisation doit afficher v19.11.
 Cette copie n’a pas été publiée par l’assistant.
