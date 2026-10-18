@@ -4,6 +4,7 @@
  const tabs=[...document.querySelectorAll('[data-v11-tab]')];
  const sections=[...document.querySelectorAll('[data-v11-section]')];
  const prev=document.getElementById('v11prev'),next=document.getElementById('v11next');
+ const finish=document.getElementById('downloadPdf');
  const toggle=document.getElementById('v11toggle'),bottom=document.getElementById('v11bottom');
  const progress=document.getElementById('v11progress'),nav=document.getElementById('v11navigation');
  const navAnchor=document.createElement('div');
@@ -13,14 +14,20 @@
  nav.parentNode.insertBefore(navAnchor,nav);
  let current=0,all=false;
  if(!Number.isInteger(current)||current<0||current>5)current=0;
+ function updateNext(){
+   next.disabled=current===5&&(!finish||finish.disabled);
+   next.textContent=current===5
+     ?(finish?.disabled?'Création du PDF…':'Terminer et télécharger le PDF')
+     :'Suivant →';
+ }
  function show(scroll=false){
    tabs.forEach((b,i)=>{b.setAttribute('aria-selected',String(i===current));b.tabIndex=i===current?0:-1});
    sections.forEach(el=>{el.hidden=!all&&Number(el.dataset.v11Section)!==current});
    bottom.hidden=all;
    toggle.textContent=all?'Afficher les onglets':'Afficher tout';
    progress.textContent=(current+1)+' / 6';
-   prev.disabled=current===0;next.disabled=current===5;
-   next.textContent=current===5?'Dernière étape ✓':'Suivant →';
+   prev.disabled=current===0;
+   updateNext();
    if(scroll){
      // Mesurer un repère NON sticky plutôt que la position du menu sticky.
      // Le menu sticky a un top de 0 même lorsque sa position réelle est plus haut.
@@ -37,7 +44,16 @@
  }
  function select(i){all=false;current=Math.max(0,Math.min(5,i));try{localStorage.setItem(KEY,String(current))}catch(e){}show(true)}
  tabs.forEach(b=>b.addEventListener('click',()=>select(Number(b.dataset.v11Tab))));
- prev.addEventListener('click',()=>select(current-1));next.addEventListener('click',()=>select(current+1));
+ prev.addEventListener('click',()=>select(current-1));
+ next.addEventListener('click',()=>{
+   if(current<5){select(current+1);return;}
+   // Réutiliser l'action existante : validations, sauvegarde et PDF identiques.
+   if(!finish||finish.disabled)return;
+   finish.click();
+   updateNext();
+ });
+ // Le bouton principal reste la source de l'état pendant la génération du PDF.
+ if(finish)new MutationObserver(updateNext).observe(finish,{attributes:true,attributeFilter:['disabled']});
  toggle.addEventListener('click',()=>{all=!all;show(false)});
  // Un nouveau rapport commence à l'onglet Client, sauf si l'utilisateur récupère un brouillon.
  document.getElementById('new')?.addEventListener('click',()=>select(0));

@@ -1,18 +1,16 @@
-VIBRATECH 19.8 — PDF : HEURES ET DÉPLACEMENTS
+VIBRATECH 19.9 — BOUTON DE FIN DU FORMULAIRE
 
-Le résumé « Chez client / Déplacement / Km » est retiré sous chaque journée du PDF.
-Les dates et les quatre heures de départ/arrivée restent visibles pour chaque journée.
-Le total général des heures et kilomètres reste affiché une seule fois en dessous.
-La présentation de l’impression depuis le navigateur suit le même principe.
-Les données saisies, les calculs et la synchronisation 19.7 sont conservés.
+À l’étape 6 « Signer », le bouton « Dernière étape ✓ » devient « Terminer et télécharger le PDF ».
+Il déclenche exactement le bouton principal : vérification du client, avertissement si la signature est absente, enregistrement du rapport terminé et téléchargement du PDF.
+Aux étapes 1 à 5, le bouton reste « Suivant → » et avance d’une étape.
+Le bouton « Confirmer la signature » conserve sa fonction actuelle.
+Pendant la création du PDF, le bouton de dernière étape est désactivé et affiche « Création du PDF… » ; il redevient disponible à la fin ou en cas d’erreur.
 
-VÉRIFICATION
-Un PDF de démonstration de deux journées a été généré avec le code de cette version et vérifié visuellement. Les quatre heures de chaque journée restent présentes ; les totaux de l’exemple sont 11 h 30 chez le client, 3 h de déplacement et 120 km. La syntaxe des scripts et les fichiers du cache ont aussi été vérifiés. Le fichier cloud-sync.js est identique à celui de la version 19.7 validée par l’utilisateur.
-Le PDF de démonstration utilise un moteur de dessin local ; le rendu des polices peut varier légèrement dans Safari ou sur iPhone.
+Le code de synchronisation et le générateur PDF sont identiques à la version 19.8.
 
 INSTALLATION
-Conserver la version 19.7 en sauvegarde. Fermer Vibratech pendant la mise à jour.
-Décompresser le ZIP et remplacer sur GitHub tout le contenu de l’application, en conservant les dossiers css/ et js/.
-Après publication, rouvrir/recharger Vibratech sur le Mac et l’iPhone. L’onglet Synchronisation doit afficher v19.8.
-Créer un PDF pour vérifier le résultat sur chaque appareil. Les données des rapports existants ne sont pas modifiées ; générer à nouveau le PDF d’un rapport pour obtenir la nouvelle présentation.
+Conserver la version 19.8 en sauvegarde. Fermer Vibratech pendant la mise à jour.
+Décompresser le ZIP et remplacer tout le contenu de l’application sur GitHub, y compris les dossiers css/ et js/.
+Après publication, rouvrir/recharger l’application sur chaque appareil. L’onglet Synchronisation doit afficher v19.9.
+Essayer le nouveau bouton à la dernière étape avec un rapport fictif.
 Cette copie n’a pas été publiée par l’assistant.
