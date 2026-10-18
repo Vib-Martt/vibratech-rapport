@@ -1,3 +1,5 @@
+> Version 19.10 : organisation des onglets et du répertoire. Modifications dans index.html, css/application.css, js/clients.js, js/navigation.js, js/recherche-clients.js et retour au champ client depuis la validation dans js/rapports.js. Instructions actuelles dans LISEZ-MOI.txt.
+
 > Version 19.9 : le bouton de navigation de la dernière étape déclenche maintenant l’action PDF existante. Changement dans js/etapes-rapport.js. Instructions actuelles dans LISEZ-MOI.txt.
 
 > Version 19.8 : modification de la présentation des heures dans js/pdf.js et de l’impression dans js/rapports.js. Voir LISEZ-MOI.txt pour les instructions actuelles. Les notes ci-dessous décrivent les étapes précédentes.

@@ -5,8 +5,7 @@
 const input=document.getElementById('client');
 const box=document.getElementById('v13suggestions');
 const select=document.getElementById('v9clientSelect');
-const apply=document.getElementById('v9apply');
-if(!input||!box||!select||!apply)return;
+if(!input||!box||!select)return;
 
 const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('fr').trim();
 function close(){box.hidden=true;box.replaceChildren()}
@@ -24,7 +23,7 @@ function show(){
       const selectedId=o.value;
       select.value=selectedId;
       // L'action d'origine vérifie si des données risquent d'être remplacées.
-      apply.click();
+      window.VBTClients.apply(selectedId);
       close()
    });
    box.append(btn);

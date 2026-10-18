@@ -1,16 +1,18 @@
-VIBRATECH 19.9 — BOUTON DE FIN DU FORMULAIRE
+VIBRATECH 19.10 — ORGANISATION DES ONGLETS
 
-À l’étape 6 « Signer », le bouton « Dernière étape ✓ » devient « Terminer et télécharger le PDF ».
-Il déclenche exactement le bouton principal : vérification du client, avertissement si la signature est absente, enregistrement du rapport terminé et téléchargement du PDF.
-Aux étapes 1 à 5, le bouton reste « Suivant → » et avance d’une étape.
-Le bouton « Confirmer la signature » conserve sa fonction actuelle.
-Pendant la création du PDF, le bouton de dernière étape est désactivé et affiche « Création du PDF… » ; il redevient disponible à la fin ou en cas d’erreur.
+NOUVEAUTÉS
+Un onglet « Enregistrer et exporter » se trouve à côté de Synchronisation. Il regroupe : terminer et télécharger le PDF, imprimer le PDF, exporter et importer les rapports, exporter et importer les clients (JSON).
+Dans Rapport > Client, le bouton « Enregistrer ce client dans le répertoire » se trouve à la fin des coordonnées, juste avant Précédent / Suivant.
+Dans Clients, le champ de recherche et les deux grands boutons « Remplir le rapport » et « Enregistrer les coordonnées » sont retirés. Choisir un client dans le menu remplit directement le rapport et ouvre son étape Client. Les fiches avec leurs actions Utiliser / Supprimer restent disponibles.
+Les suggestions de clients dans le formulaire restent actives. Si le remplacement des coordonnées est annulé, le rapport est conservé et la navigation n’est pas déclenchée.
+Le bouton de fin à l’étape Signer conserve l’action de la version 19.9.
 
-Le code de synchronisation et le générateur PDF sont identiques à la version 19.8.
+VÉRIFICATIONS
+Ouverture et navigation vérifiées dans le navigateur ; création d’un client depuis Rapport, apparition dans le répertoire et sélection directe depuis le menu vérifiées avec des données fictives. Emplacement des six outils contrôlé dans le nouvel onglet. Aucun message d’erreur dans la console lors de ces essais. Test isolé de l’acceptation et de l’annulation du remplacement des coordonnées réussi. Syntaxe et ressources hors ligne vérifiées.
+Le code de synchronisation, le générateur PDF et le bouton final de l’étape Signer sont identiques à la version 19.9. Le test sur iPhone et les transferts réels restent à effectuer après installation.
 
 INSTALLATION
-Conserver la version 19.8 en sauvegarde. Fermer Vibratech pendant la mise à jour.
-Décompresser le ZIP et remplacer tout le contenu de l’application sur GitHub, y compris les dossiers css/ et js/.
-Après publication, rouvrir/recharger l’application sur chaque appareil. L’onglet Synchronisation doit afficher v19.9.
-Essayer le nouveau bouton à la dernière étape avec un rapport fictif.
+Conserver la version 19.9 en sauvegarde. Fermer Vibratech pendant la mise à jour.
+Décompresser le ZIP puis remplacer sur GitHub tout le contenu de l’application, y compris les dossiers css/ et js/.
+Après publication, rouvrir/recharger l’application sur les appareils. Synchronisation doit afficher v19.10.
 Cette copie n’a pas été publiée par l’assistant.
