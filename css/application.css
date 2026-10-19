@@ -168,3 +168,9 @@
 #pdfPreviewPages.zoomed canvas{width:1000px;min-width:1000px;max-width:none}
 @media(max-width:480px){.pdf-preview-toolbar{align-items:flex-start;flex-direction:column;padding:12px}.pdf-preview-controls{width:100%}.pdf-preview-controls button:last-child{flex:1}#pdfPreviewPages{padding:6px}}
 @media print{#pdfPreviewDialog{display:none!important}}
+
+/* Mise en évidence de l’aperçu PDF avant signature. */
+#previewPdf{background:#ffd43b;color:#172c3b;border:2px solid #e0ad00;box-shadow:0 3px 8px #b8860026;font-weight:800}
+#previewPdf:hover{background:#ffca1a}
+#previewPdf:active{background:#f2bd00}
+#previewPdf:focus-visible{outline:3px solid #2456a6;outline-offset:3px}
