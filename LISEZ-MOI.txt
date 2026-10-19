@@ -31,3 +31,10 @@ L’image de signature enregistrée est désormais conservée indépendamment du
 La correction préserve une signature présente dans les données du rapport ; elle ne recrée pas une signature déjà remplacée par une image vide dans une sauvegarde antérieure.
 Après transfert sur GitHub, ouvrir https://vib-martt.github.io/vibratech-rapport/?maj=signature-7 puis ouvrir un rapport signé depuis l’historique et utiliser « Ouvrir le PDF pour imprimer ».
 Validation : 8 tests locaux de signature et 5 tests d’impression réussis. Vérification sur les appareils réels à effectuer après installation.
+
+PLUSIEURS RAPPORTS POUR UN MÊME CLIENT
+Dans Historique, utiliser « Nouveau rapport pour ce client » pour commencer une nouvelle visite avec les coordonnées préremplies. Travaux, dates, photos, matériel et signature sont réinitialisés.
+Un rapport terminé qui a été modifié est enregistré sous un nouvel identifiant : la version terminée précédente reste dans l’historique. Les rapports encore en cours continuent de se mettre à jour pour les visites sur plusieurs jours.
+La correction ne restaure pas automatiquement des rapports déjà remplacés auparavant.
+Après transfert, ouvrir https://vib-martt.github.io/vibratech-rapport/?maj=historique-8
+Validation locale : 36 tests réussis (historique, signatures, impression et synchronisation).
