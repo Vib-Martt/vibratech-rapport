@@ -19,3 +19,9 @@ IMPRESSION UNIFIÉE
 Sur ordinateur, « Imprimer le PDF » ouvre le même PDF que le téléchargement de fin de rapport, dans un nouvel onglet. Utiliser le bouton Imprimer du lecteur PDF. Si l’ouverture est bloquée, le PDF est téléchargé pour être ouvert et imprimé.
 Sur iPhone/iPad, utiliser Imprimer dans le menu de partage du PDF.
 L’impression ne termine pas le rapport et ne le sauvegarde pas dans l’historique.
+
+MISE À JOUR SAFARI — IMPRESSION
+Les scripts et la feuille de style portent maintenant une adresse de mise à jour pour éviter de réutiliser les anciens fichiers en cache.
+Après remplacement des fichiers sur GitHub, ouvrir https://vib-martt.github.io/vibratech-rapport/?maj=impression-6 avec Internet.
+Le bouton doit afficher « Ouvrir le PDF pour imprimer » sur Mac. Il ouvre le PDF actuel, dont la signature est à droite, dans un nouvel onglet.
+Aucune suppression des données du navigateur n’est nécessaire.

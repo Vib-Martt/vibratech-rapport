@@ -1,7 +1,7 @@
-const CACHE = 'vibratech-v19-13-materiel-signature-photos-sync-impression-v5';
-const ASSETS = ["./cloud-sync.js", "./", "./index.html", "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./css/application.css", "./js/telephone.js", "./js/photos.js", "./js/rapports.js", "./js/pdf.js", "./js/apercu-pdf.js", "./js/clients.js", "./js/etapes-rapport.js", "./js/navigation.js", "./js/recherche-clients.js", "./js/installation.js"];
+const CACHE = 'vibratech-v19-13-materiel-signature-photos-sync-impression-v6';
+const ASSETS = ["./cloud-sync.js?v=20261019-impression-6", "./", "./index.html", "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./css/application.css?v=20261019-impression-6", "./js/telephone.js?v=20261019-impression-6", "./js/photos.js?v=20261019-impression-6", "./js/rapports.js?v=20261019-impression-6", "./js/pdf.js?v=20261019-impression-6", "./js/apercu-pdf.js?v=20261019-impression-6", "./js/clients.js?v=20261019-impression-6", "./js/etapes-rapport.js?v=20261019-impression-6", "./js/navigation.js?v=20261019-impression-6", "./js/recherche-clients.js?v=20261019-impression-6", "./js/installation.js?v=20261019-impression-6"];
 self.addEventListener('install', event => {
- event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
+ event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'})))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('vibratech-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
