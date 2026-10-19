@@ -34,7 +34,39 @@ async function token(){
  return refreshPromise;
 }
 function filter(item){const p=new URLSearchParams({user_id:'eq.'+session.user.id,kind:'eq.'+item.kind,id:'eq.'+item.id});return p}
-async function listRemote(){const rows=[];for(let offset=0;;offset+=200){const q=new URLSearchParams({user_id:'eq.'+session.user.id,select:'*',order:'kind.asc,id.asc',limit:'200',offset:String(offset)});const batch=await raw('/rest/v1/vibratech_items?'+q);rows.push(...batch);if(batch.length<200)break}return rows}
+// Image payloads travel with the report but stay in IndexedDB on each device.
+// Keep them out of localStorage and revision comparison metadata.
+let remotePhotos=new Map();
+function photoRefs(item){return item.kind==='rapport'&&!item.deleted?(item.data?.data?.photos||[]):[]}
+async function unpack(row){
+ const clean=clone(row),images=clean.kind==='rapport'?clean.data?._photoData:null;
+ if(images){
+  for(const [id,data]of Object.entries(images)){
+   if(typeof data!=='string'||!/^data:image\/(jpeg|png|webp);base64,/.test(data))throw Error('Format de photo synchronisée invalide.');
+   await window.VBTPhotos.store({id,data});
+  }
+ }
+ if(clean.kind==='rapport'){
+  remotePhotos.set(keyOf(clean),images||{});
+  if(clean.data)delete clean.data._photoData;
+ }
+ return clean;
+}
+async function photoPayload(item){
+ const images={},existing=remotePhotos.get(keyOf(item))||{};
+ for(const p of photoRefs(item)){
+  const record=await window.VBTPhotos.read(p.id);
+  const data=record?.data||existing[p.id];
+  if(data)images[p.id]=data;
+ }
+ return images;
+}
+async function needsPhotos(item){
+ const existing=remotePhotos.get(keyOf(item))||{};
+ for(const p of photoRefs(item))if(!existing[p.id]&&(await window.VBTPhotos.read(p.id))?.data)return true;
+ return false;
+}
+async function listRemote(){const rows=[];for(let offset=0;;offset+=200){const q=new URLSearchParams({user_id:'eq.'+session.user.id,select:'*',order:'kind.asc,id.asc',limit:'200',offset:String(offset)});const batch=await raw('/rest/v1/vibratech_items?'+q);for(const row of batch)rows.push(await unpack(row));if(batch.length<200)break}return rows}
 function same(remote,desired){return remote.deleted===desired.deleted&&(remote.deleted||canonical(remote.data)===canonical(desired.data))}
 // Missing local data can mean an incomplete/stale local list, not user intent.
 // Only the application's explicit Delete actions may enqueue a cloud deletion.
@@ -70,7 +102,9 @@ function preserveConflict(desired){
  if(desired.kind==='rapport')window.VBTReports.copyId(desired.id,newId);
 }
 async function writeItem(desired,m){
- const body={data:desired.data,deleted:desired.deleted};
+ const data=clone(desired.data);
+ if(desired.kind==='rapport'&&!desired.deleted)data._photoData=await photoPayload(desired);
+ const body={data,deleted:desired.deleted};
  if(!m){if(desired.deleted)return null;return (await raw('/rest/v1/vibratech_items',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({...body,user_id:session.user.id,kind:desired.kind,id:desired.id})}))[0]}
  const q=filter(desired);q.set('revision','eq.'+m.revision);
  const rows=await raw('/rest/v1/vibratech_items?'+q,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});
@@ -80,7 +114,7 @@ async function sync(){
  clearTimeout(timer);if(busy||!session)return;if(!navigator.onLine){status('Hors ligne — modifications conservées sur cet appareil.');return}
  busy=true;$('cloudSync').disabled=true;let conflicts=0;
  try{
- await token();status('Synchronisation en cours…');
+ remotePhotos=new Map();await token();status('Synchronisation en cours…');
  // First reconcile the server against the last acknowledged local version.
  const remote=await listRemote();
  for(const row of remote){
@@ -94,18 +128,21 @@ async function sync(){
  // Recalculate after every network await: edits made during sync stay queued.
  for(const initial of desiredItems().values()){
   const k=keyOf(initial),m=meta[k],desired=desiredItems().get(k);
-  if(!desired||!localChanged(desired,m))continue;
+  if(!desired||(!localChanged(desired,m)&&!await needsPhotos(desired)))continue;
   try{
    const result=await writeItem(desired,m);
-   if(result){acknowledge(result)}else{
+   if(result){acknowledge(await unpack(result))}else{
     const rows=await raw('/rest/v1/vibratech_items?'+filter(desired)+'&select=*');
-    if(rows[0]){const latest=desiredItems().get(k);if(same(rows[0],latest)){acknowledge(rows[0])}else{preserveConflict(latest);conflicts++;adopt(rows[0])}}
+    if(rows[0]){rows[0]=await unpack(rows[0]);const latest=desiredItems().get(k);if(same(rows[0],latest)){acknowledge(rows[0])}else{preserveConflict(latest);conflicts++;adopt(rows[0])}}
     else throw Error('Élément absent du serveur. Réessayez la synchronisation.');
    }
   }catch(e){if(e.status===409){changed();continue}throw e}
  }
+ let missing=0;
+ for(const item of desiredItems().values())for(const p of photoRefs(item))if(!(remotePhotos.get(keyOf(item))||{})[p.id])missing++;
  const pending=[...desiredItems().values()].some(d=>localChanged(d,meta[keyOf(d)]));
  status(conflicts?'Synchronisé — '+conflicts+' différence(s) conservée(s). Consultez les copies « à vérifier » dans l’historique ou les clients.':pending?'Modifications restantes — synchronisation en cours…':'✓ Synchronisé à '+new Date().toLocaleTimeString('fr-CA')+' — '+session.user.email);
+ if(missing)status('Rapports synchronisés — '+missing+' photo(s) à récupérer : synchronisez aussi l’appareil où elles ont été ajoutées.');
  if(pending)changed();
  }catch(e){status('Synchronisation non terminée : '+e.message+' Vos données locales sont conservées.');}
  finally{busy=false;$('cloudSync').disabled=false}

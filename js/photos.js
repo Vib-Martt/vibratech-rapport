@@ -6,11 +6,17 @@ const DB='vibratech_photos_v18', STORE='photos';let photos=[];let generation=0;l
 const $=id=>document.getElementById(id);
 function db(){if(!dbPromise)dbPromise=new Promise((resolve,reject)=>{if(!window.indexedDB)return reject(new Error('Stockage de photos indisponible'));const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});return dbPromise}
 async function put(record){const d=await db();return new Promise((ok,no)=>{const tx=d.transaction(STORE,'readwrite');tx.objectStore(STORE).put(record);tx.oncomplete=ok;tx.onerror=()=>no(tx.error)})}
+async function store(record){
+ await put(record);
+ let updated=false;
+ for(const p of photos)if(p.id===record.id){p.data=record.data;p.missing=false;updated=true}
+ if(updated)renderPreserve();
+}
 async function get(id){const d=await db();return new Promise((ok,no)=>{const tx=d.transaction(STORE,'readonly'),r=tx.objectStore(STORE).get(id);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 function mark(){document.getElementById('client')?.dispatchEvent(new Event('input',{bubbles:true}))}
 function snapshot(){return photos.map(({id,caption})=>({id,caption}))}
 function render(){const root=$('v18photos');if(!root)return;root.replaceChildren();for(const [index,p] of photos.entries()){
-const box=document.createElement('div');box.className='v18item';const img=document.createElement('img');img.alt='Photo '+(index+1);img.loading='lazy';if(p.data)img.src=p.data;
+const box=document.createElement('div');box.className='v18item';const img=document.createElement('img');img.alt='Photo '+(index+1);img.loading='lazy';if(p.data)img.src=p.data;else img.alt='Photo '+(index+1)+' — en attente de synchronisation depuis l’appareil d’origine';
 const label=document.createElement('label');label.textContent='Description de la photo '+(index+1);const input=document.createElement('textarea');input.value=p.caption||'';input.placeholder='Ex. Roulement endommagé avant remplacement';input.addEventListener('input',()=>{p.caption=input.value;mark()});
 const row=document.createElement('div');row.className='v18row';const number=document.createElement('span');number.className='v18count';number.textContent='Photo '+(index+1);const remove=document.createElement('button');remove.type='button';remove.textContent='Supprimer';remove.addEventListener('click',()=>{if(!confirm('Retirer cette photo du rapport ?'))return;photos=photos.filter(x=>x!==p);render();mark()});row.append(number,remove);box.append(img,label,input,row);root.append(box)
 }}
@@ -18,7 +24,7 @@ async function load(items){const seq=++generation;photos=(Array.isArray(items)?i
 function renderPreserve(){const inputs=[...$('v18photos').querySelectorAll('textarea')];const focused=document.activeElement;const i=inputs.indexOf(focused);const pos=i>=0?focused.selectionStart:0;render();if(i>=0){const next=$('v18photos').querySelectorAll('textarea')[i];if(next){next.focus();next.setSelectionRange(pos,pos)}}}
 function reset(){generation++;photos=[];render();if($('v18pick'))$('v18pick').value=''}
 function compress(file){return new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),im=new Image();im.onload=()=>{try{const max=1700,r=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*r));c.height=Math.max(1,Math.round(im.height*r));c.getContext('2d').drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.79))}catch(e){reject(e)}finally{URL.revokeObjectURL(url)}};im.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Image non reconnue'))};im.src=url})}
-$('v18pick').addEventListener('change',async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;const status=$('v18storage');status.textContent='Traitement des photos en cours…';let count=0;for(const f of files){try{const data=await compress(f);const id='photo-'+Date.now()+'-'+Math.random().toString(36).slice(2);await put({id,data});photos.push({id,caption:'',data});count++;render();mark()}catch(err){alert('Impossible d’ajouter '+f.name+' : '+err.message)}}status.textContent=count+' photo(s) ajoutée(s). Elles sont stockées sur cet appareil, dans ce navigateur.'});
+$('v18pick').addEventListener('change',async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;const status=$('v18storage');status.textContent='Traitement des photos en cours…';let count=0;for(const f of files){try{const data=await compress(f);const id='photo-'+Date.now()+'-'+Math.random().toString(36).slice(2);await put({id,data});photos.push({id,caption:'',data});count++;render();mark()}catch(err){alert('Impossible d’ajouter '+f.name+' : '+err.message)}}status.textContent=count+' photo(s) ajoutée(s). Enregistrez le rapport pour les synchroniser avec vos autres appareils.'});
 async function appendPdfPages(o){
  if(!photos.length)return;
  // Deux photos par page au maximum; un format vertical ou une longue légende
@@ -29,7 +35,7 @@ async function appendPdfPages(o){
   const p=photos[i];let data=p.data;
   if(!data){const r=await get(p.id);data=r?.data}
   if(!data){
-   const error=new Error('La photo '+(i+1)+' du rapport est introuvable sur cet appareil. Les images ne sont pas encore synchronisées entre les appareils. Ouvrez ce rapport dans le navigateur où la photo a été ajoutée, ou remplacez la photo manquante dans l’onglet Photos sur cet appareil.');
+   const error=new Error('La photo '+(i+1)+' du rapport est introuvable sur cet appareil. Synchronisez d’abord l’appareil où la photo a été ajoutée, puis cet appareil. Si nécessaire, remplacez la photo manquante dans l’onglet Photos.');
    error.code='PHOTO_UNAVAILABLE';
    throw error;
   }
@@ -62,5 +68,5 @@ async function appendPdfPages(o){
  if(pageStarted)o.finishPage();
 }
 
-window.VBTPhotos={snapshot,load,reset,appendPdfPages};render();
+window.VBTPhotos={snapshot,load,reset,appendPdfPages,read:get,store};render();
 })();

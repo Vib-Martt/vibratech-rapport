@@ -29,17 +29,18 @@ class Server{
   throw Error(method);
  }
 }
-function device(server,{reports=[],clients=[],meta={},storage:shared}={}){
+function device(server,{reports=[],clients=[],meta={},storage:shared,photos={}}={}){
  let local={rapport:copy(reports),client:copy(clients)};
  const store=shared||new Map();
  if(!shared){store.set('vbt_cloud_session_v19',JSON.stringify({access_token:'TEST-ONLY',expires_at:9999999999,user:{id:'test-user',email:'test@example.invalid'}}));store.set('vbt_cloud_meta_v19',JSON.stringify(meta));}
+ const images=new Map(Object.entries(photos));
  const elements=new Map(),events={};let timerId=0;
  const doc={hidden:false,getElementById:id=>{if(!elements.has(id))elements.set(id,{textContent:'',disabled:false,hidden:false,value:'',addEventListener(){},appendChild(){}});return elements.get(id)},addEventListener:(n,f)=>events[n]=f,createElement:()=>({click(){},remove(){}}),body:{appendChild(){}}};
  const localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k)};
- const window={addEventListener:(n,f)=>events[n]=f,VBTReports:{get:()=>local.rapport,set:a=>local.rapport=copy(a),copyId(){}},VBTClients:{get:()=>local.client,set:a=>local.client=copy(a)}};
+ const window={VBTPhotos:{read:async id=>images.has(id)?{id,data:images.get(id)}:undefined,store:async r=>images.set(r.id,r.data)},addEventListener:(n,f)=>events[n]=f,VBTReports:{get:()=>local.rapport,set:a=>local.rapport=copy(a),copyId(){}},VBTClients:{get:()=>local.client,set:a=>local.client=copy(a)}};
  const context={window,document:doc,localStorage,fetch:server.fetch.bind(server),URL,URLSearchParams,AbortController,Blob,console,navigator:{onLine:true},setTimeout:()=>++timerId,clearTimeout(){},setInterval(){},confirm:()=>true,crypto:require('crypto').webcrypto};
  vm.runInNewContext(code,context,{filename});
- return {local,store,elements,context,async sync(){await elements.get('cloudSync').onclick()},delete(kind,id){window.VBTCloud.deleted?.(kind,id);local[kind]=local[kind].filter(x=>x.id!==id)},status:()=>elements.get('cloudStatus').textContent};
+ return {local,store,elements,context,images,async sync(){await elements.get('cloudSync').onclick()},delete(kind,id){window.VBTCloud.deleted?.(kind,id);local[kind]=local[kind].filter(x=>x.id!==id)},status:()=>elements.get('cloudStatus').textContent};
 }
 const tests=[];function test(name,fn){tests.push([name,fn])}
 test('Deux appareils : réunion des clients et rapports distincts',async()=>{
@@ -95,5 +96,31 @@ test('Annulation du journal après échec de suppression',async()=>{
 test('Plusieurs pages serveur sont réunies sans perte',async()=>{
  const s=new Server(),a=device(s,{clients:Array.from({length:205},(_,i)=>client('c'+i,'Client '+i))}),b=device(s,{clients:[client('autre','Autre appareil')]});
  await a.sync();await b.sync();await a.sync();assert.equal(a.local.client.length,206);assert.equal(b.local.client.length,206);
+});
+const image='data:image/jpeg;base64,/9j/TEST';
+function illustrated(id='p'){const r=report(id,'Photos');r.data.photos=[{id:'image-1',caption:'Roulement'}];return r}
+test('Photos transférées entre appareils sans remplir localStorage',async()=>{
+ const s=new Server(),a=device(s,{reports:[illustrated()],photos:{'image-1':image}}),b=device(s);
+ await a.sync();await b.sync();assert.equal(b.images.get('image-1'),image);assert.equal(b.local.rapport[0].data.photos[0].caption,'Roulement');
+ assert(!JSON.stringify(b.local).includes('base64'));assert(!b.store.get('vbt_cloud_meta_v19').includes('base64'));
+ const revision=s.rows.get('rapport:p').revision;await a.sync();await b.sync();assert.equal(s.rows.get('rapport:p').revision,revision);
+});
+test('Migration des anciens rapports déjà synchronisés',async()=>{
+ const s=new Server(),a=device(s,{reports:[illustrated()]});await a.sync();assert(a.status().includes('photo(s) à récupérer'));
+ a.images.set('image-1',image);await a.sync();const b=device(s);await b.sync();assert.equal(b.images.get('image-1'),image);assert.equal(s.rows.size,1);
+});
+test('Panne pendant le transfert : reprise des images',async()=>{
+ const s=new Server(),a=device(s,{reports:[illustrated()],photos:{'image-1':image}});s.fail=true;await a.sync();assert.equal(a.images.get('image-1'),image);
+ s.fail=false;await a.sync();const b=device(s);await b.sync();assert.equal(b.images.get('image-1'),image);
+});
+test('Stockage photo indisponible : aucune fausse confirmation, puis reprise',async()=>{
+ const s=new Server(),a=device(s,{reports:[illustrated()],photos:{'image-1':image}}),b=device(s);await a.sync();
+ const save=b.context.window.VBTPhotos.store;b.context.window.VBTPhotos.store=async()=>{throw Error('quota')};await b.sync();assert(b.status().includes('non terminée'));assert.equal(b.local.rapport.length,0);
+ b.context.window.VBTPhotos.store=save;await b.sync();assert.equal(b.images.get('image-1'),image);
+});
+test('Conflit avec photos : les deux rapports gardent leurs images',async()=>{
+ const s=new Server(),a=device(s,{reports:[illustrated()],photos:{'image-1':image}}),b=device(s);await a.sync();await b.sync();
+ a.local.rapport[0].data.client='A';b.local.rapport[0].data.client='B';await a.sync();await b.sync();await a.sync();
+ assert.equal(a.local.rapport.length,2);for(const row of s.rows.values())assert.equal(row.data._photoData['image-1'],image);
 });
 (async()=>{let failures=0;for(const [name,fn]of tests){try{await fn();console.log('PASS',name)}catch(e){failures++;console.log('FAIL',name,e.message)}}if(failures)process.exitCode=1;console.log(`${tests.length-failures}/${tests.length} tests réussis`);})();

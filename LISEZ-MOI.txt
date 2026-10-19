@@ -7,4 +7,10 @@ INSTALLATION
 Conserver la version précédente. Remplacer le contenu de l’application sur GitHub par les fichiers de cette version, y compris js/ et css/.
 Rouvrir/recharger l’application sur chaque appareil et vérifier v19.13 dans Synchronisation. Ne pas effacer les données du navigateur.
 Cette copie n’a pas été publiée par l’assistant.
-Les images ne sont pas encore synchronisées entre appareils.
+CORRECTION — PHOTOS ET BOUTON PDF
+Le bouton d’aperçu avant signature est jaune.
+Les photos des rapports enregistrés sont désormais envoyées avec le rapport et récupérées dans le stockage photo de chaque navigateur.
+Installer cette version sur tous les appareils. Sur l’appareil contenant les photos originales, enregistrer le rapport dans l’historique, puis lancer Synchroniser. Synchroniser ensuite l’autre appareil et ouvrir le rapport depuis l’historique.
+Les brouillons seuls ne sont pas synchronisés. Ne pas effacer les données du navigateur d’origine : elles sont nécessaires pour récupérer les anciennes photos.
+Les photos peuvent augmenter le temps et le volume des transferts. Si un transfert échoue, le statut signale que la synchronisation est non terminée ; réessayer avec une connexion stable.
+Validation : tests locaux avec serveur simulé ; connexion au compte réel et déploiement non effectués.

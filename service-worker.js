@@ -1,4 +1,4 @@
-const CACHE = 'vibratech-v19-13-materiel-signature-pdf-jaune-v2';
+const CACHE = 'vibratech-v19-13-materiel-signature-photos-sync-v3';
 const ASSETS = ["./cloud-sync.js", "./", "./index.html", "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./css/application.css", "./js/telephone.js", "./js/photos.js", "./js/rapports.js", "./js/pdf.js", "./js/apercu-pdf.js", "./js/clients.js", "./js/etapes-rapport.js", "./js/navigation.js", "./js/recherche-clients.js", "./js/installation.js"];
 self.addEventListener('install', event => {
  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
