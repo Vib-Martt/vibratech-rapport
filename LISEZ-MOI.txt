@@ -25,3 +25,9 @@ Les scripts et la feuille de style portent maintenant une adresse de mise à jou
 Après remplacement des fichiers sur GitHub, ouvrir https://vib-martt.github.io/vibratech-rapport/?maj=impression-6 avec Internet.
 Le bouton doit afficher « Ouvrir le PDF pour imprimer » sur Mac. Il ouvre le PDF actuel, dont la signature est à droite, dans un nouvel onglet.
 Aucune suppression des données du navigateur n’est nécessaire.
+
+SIGNATURE DES ANCIENS RAPPORTS
+L’image de signature enregistrée est désormais conservée indépendamment du cadre de dessin. L’ouverture d’un ancien rapport et l’impression immédiate ne nécessitent plus d’afficher l’onglet Signer.
+La correction préserve une signature présente dans les données du rapport ; elle ne recrée pas une signature déjà remplacée par une image vide dans une sauvegarde antérieure.
+Après transfert sur GitHub, ouvrir https://vib-martt.github.io/vibratech-rapport/?maj=signature-7 puis ouvrir un rapport signé depuis l’historique et utiliser « Ouvrir le PDF pour imprimer ».
+Validation : 8 tests locaux de signature et 5 tests d’impression réussis. Vérification sur les appareils réels à effectuer après installation.
