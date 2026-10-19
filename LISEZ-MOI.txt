@@ -14,3 +14,8 @@ Installer cette version sur tous les appareils. Sur l’appareil contenant les p
 Les brouillons seuls ne sont pas synchronisés. Ne pas effacer les données du navigateur d’origine : elles sont nécessaires pour récupérer les anciennes photos.
 Les photos peuvent augmenter le temps et le volume des transferts. Si un transfert échoue, le statut signale que la synchronisation est non terminée ; réessayer avec une connexion stable.
 Validation : tests locaux avec serveur simulé ; connexion au compte réel et déploiement non effectués.
+
+IMPRESSION UNIFIÉE
+Sur ordinateur, « Imprimer le PDF » ouvre le même PDF que le téléchargement de fin de rapport, dans un nouvel onglet. Utiliser le bouton Imprimer du lecteur PDF. Si l’ouverture est bloquée, le PDF est téléchargé pour être ouvert et imprimé.
+Sur iPhone/iPad, utiliser Imprimer dans le menu de partage du PDF.
+L’impression ne termine pas le rapport et ne le sauvegarde pas dans l’historique.

@@ -73,25 +73,42 @@ function encodePdf(pages){
  const xref=pos;put(`xref\n0 ${objects.length}\n0000000000 65535 f \n`);for(let i=1;i<objects.length;i++)put(String(offsets[i]).padStart(10,'0')+' 00000 n \n');put(`trailer\n<< /Size ${objects.length} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`);
  return new Blob(parts,{type:'application/pdf'});
 }
-// iPhone/iPad standalone apps may not open window.print(). Share the actual PDF instead.
+// Printing and downloading both use the same rendered pages and PDF encoder.
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-if(isIOS){
- el('print').textContent='Partager / imprimer le PDF';
- el('print').onclick=async()=>{
-  const printBtn=el('print');printBtn.disabled=true;
-  try{
-   const {pages,filename}=await generate();const blob=encodePdf(pages);
-   const file=new File([blob],filename,{type:'application/pdf'});
-   if(navigator.canShare&&navigator.canShare({files:[file]})){
-    await navigator.share({files:[file],title:filename});
-    el('status').textContent='PDF prêt : choisissez Imprimer dans le menu de partage, ou enregistrez-le dans Fichiers.';
+if(isIOS)el('print').textContent='Partager / imprimer le PDF';
+el('print').onclick=async()=>{
+ if(!validateClient())return;
+ const printBtn=el('print');if(printBtn.disabled)return;
+ printBtn.disabled=true;
+ // Open synchronously while the click still authorizes a new browser tab.
+ const viewer=isIOS?null:window.open('about:blank','_blank');
+ try{
+  if(viewer){viewer.opener=null;viewer.document.title='Préparation du PDF';viewer.document.body.textContent='Préparation du rapport PDF…';}
+  const {pages,filename}=await generate();const blob=encodePdf(pages);
+  const file=isIOS?new File([blob],filename,{type:'application/pdf'}):null;
+  if(isIOS&&navigator.canShare&&navigator.canShare({files:[file]})){
+   await navigator.share({files:[file],title:filename});
+   el('status').textContent='PDF prêt : choisissez Imprimer dans le menu de partage, ou enregistrez-le dans Fichiers.';
+  }else{
+   const url=URL.createObjectURL(blob);
+   if(viewer&&!viewer.closed){
+    viewer.location.replace(url);
+    el('status').textContent='PDF ouvert dans un nouvel onglet : utilisez le bouton Imprimer du lecteur PDF. Le document utilise la même mise en page que le téléchargement.';
+    // Keep the URL alive while the viewer is open (including slow print dialogs).
+    const cleanup=setInterval(()=>{if(viewer.closed){clearInterval(cleanup);URL.revokeObjectURL(url)}},1000);
    }else{
-    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
-    el('status').textContent='Ouvrez le PDF dans Fichiers, puis Partager → Imprimer.';
+    const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    el('status').textContent=isIOS?'Ouvrez le PDF dans Fichiers, puis Partager → Imprimer.':'PDF téléchargé : ouvrez-le pour l’imprimer. Le navigateur n’a pas ouvert le nouvel onglet.';
    }
-  }catch(e){if(e.name!=='AbortError'){el('status').textContent='Impression indisponible : téléchargez le PDF, puis ouvrez Fichiers → Partager → Imprimer.';alert(el('status').textContent)}}
-  finally{printBtn.disabled=false}
- };
-}
+  }
+ }catch(e){
+  if(viewer&&!viewer.closed)viewer.close();
+  if(e.name!=='AbortError'){
+   el('status').textContent='Impression impossible : '+(e.message||'réessayez de générer le PDF.');
+   alert(el('status').textContent);
+  }
+ }finally{printBtn.disabled=false}
+};
 btn.addEventListener('click',async()=>{if(!validateClient())return;const previousFinished=reportFinished;if(!signed&&!confirm('La signature du client est absente. Voulez-vous terminer et télécharger le PDF quand même ?'))return;reportFinished=true;renderDays();btn.disabled=true;const old=btn.textContent;btn.textContent='Création du PDF…';try{const {pages,filename}=await generate();if(typeof window.vbtSaveReportForPdf!=='function'||!window.vbtSaveReportForPdf()){reportFinished=previousFinished;renderDays();return;}document.dispatchEvent(new Event('vbt-report-saved'));const blob=encodePdf(pages),url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();el('status').textContent='Rapport enregistré dans l’historique et PDF téléchargé : '+filename+' ('+pages.length+' page(s)).';setTimeout(()=>URL.revokeObjectURL(url),60000)}catch(e){reportFinished=previousFinished;renderDays();console.error(e);alert('Impossible de générer le PDF : '+e.message)}finally{btn.disabled=false;btn.textContent=old}});
 })();
