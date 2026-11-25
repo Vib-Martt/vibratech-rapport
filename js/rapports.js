@@ -49,14 +49,24 @@ function restoreSignature(data){
  drawing=false;signatureData=data||null;signed=!!signatureData;resize();
 }
 function captureSignature(){signatureGeneration++;signatureRendering=false;signatureData=canvas.toDataURL('image/png');signed=true}
-function resize(){
+function resize(preserveDrawing=false){
  finish();
  const seq=++signatureGeneration,w=canvas.clientWidth,h=canvasHeight();
+ const previous=preserveDrawing&&signatureDialog.open&&signed&&!signatureRendering
+  ?document.createElement('canvas'):null;
+ if(previous){
+  previous.width=canvas.width;previous.height=canvas.height;
+  previous.getContext('2d').drawImage(canvas,0,0);
+ }
  signatureRendering=false;
  if(w<1||h<1){ctx.clearRect(0,0,canvas.width,canvas.height);return}
  canvas.width=Math.round(w*devicePixelRatio);canvas.height=Math.round(h*devicePixelRatio);
  ctx.scale(devicePixelRatio,devicePixelRatio);ctx.lineWidth=2.2;ctx.strokeStyle='#183c58';ctx.lineCap='round';ctx.lineJoin='round';
- if(signatureData){
+ if(previous){
+  // Preserve the drawing's position relative to the entire signing area.
+  const scale=Math.min(w/previous.width,h/previous.height);
+  ctx.drawImage(previous,0,0,previous.width*scale,previous.height*scale);
+ }else if(signatureData){
   signatureRendering=true;const image=new Image();
   image.onload=()=>{if(seq!==signatureGeneration)return;const scale=Math.min(w/(image.naturalWidth||w),h/(image.naturalHeight||h));
    const width=(image.naturalWidth||w)*scale,height=(image.naturalHeight||h)*scale;
@@ -65,7 +75,14 @@ function resize(){
   image.src=signatureData;
  }
 }
-window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined'){new ResizeObserver(()=>{if(canvas.clientWidth>0&&(Math.abs(canvas.width-canvas.clientWidth*devicePixelRatio)>1||Math.abs(canvas.height-canvasHeight()*devicePixelRatio)>1))resize()}).observe(canvas)}document.querySelectorAll('[data-v11-tab], [data-v12-tab], #v11next, #v11prev').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(resize)));let signatureLocked=false;function pos(e){const r=canvas.getBoundingClientRect();return [e.clientX-r.left-(canvas.clientLeft||0),e.clientY-r.top-(canvas.clientTop||0)]}canvas.addEventListener('pointerdown',e=>{if(signatureLocked||signatureRendering)return;drawing=true;cropSignature=!!signatureDialog.open;canvas.setPointerCapture(e.pointerId);const [x,y]=pos(e);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+.1,y+.1);ctx.stroke();if(!cropSignature)captureSignature()});canvas.addEventListener('pointermove',e=>{if(signatureLocked||!drawing)return;const [x,y]=pos(e);ctx.lineTo(x,y);ctx.stroke();if(!cropSignature)captureSignature()});function finish(){if(drawing){drawing=false;if(cropSignature)saveCroppedSignature();markDirty()}}canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',finish);function setSignatureLocked(locked){
+function resizeSignatureIfNeeded(){
+ const width=Math.round(canvas.clientWidth*devicePixelRatio);
+ const height=Math.round(canvasHeight()*devicePixelRatio);
+ if(width>0&&height>0&&(canvas.width!==width||canvas.height!==height))resize(true);
+}
+window.addEventListener('resize',resizeSignatureIfNeeded);
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(resizeSignatureIfNeeded).observe(canvas);
+document.querySelectorAll('[data-v11-tab], [data-v12-tab], #v11next, #v11prev').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(resize)));let signatureLocked=false;function pos(e){const r=canvas.getBoundingClientRect();return [e.clientX-r.left-(canvas.clientLeft||0),e.clientY-r.top-(canvas.clientTop||0)]}canvas.addEventListener('pointerdown',e=>{if(signatureLocked||signatureRendering)return;drawing=true;cropSignature=!!signatureDialog.open;canvas.setPointerCapture(e.pointerId);const [x,y]=pos(e);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+.1,y+.1);ctx.stroke();if(!cropSignature)captureSignature()});canvas.addEventListener('pointermove',e=>{if(signatureLocked||!drawing)return;const [x,y]=pos(e);ctx.lineTo(x,y);ctx.stroke();if(!cropSignature)captureSignature()});function finish(){if(drawing){drawing=false;if(cropSignature)saveCroppedSignature();markDirty()}}canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',finish);function setSignatureLocked(locked){
  signatureLocked=locked;drawing=false;
  el('confirmerSignature').disabled=locked;
  canvas.style.touchAction=locked?'pan-y':'none';

@@ -213,8 +213,7 @@ html:has(#signatureDialog[open]) { overflow: hidden; }
 #signatureDialog #signature { display: block; height: 100%; min-height: 0; }
 #signatureDialog .signature-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 #signatureDialog .signature-actions button { flex: 1 1 auto; padding: 11px 8px; }
-#signatureDialog #signatureStatus { margin: 4px 0 0; }
-#signatureDialog #signatureStatus:empty { margin: 0; }
+#signatureDialog #signatureStatus { margin: 4px 0 0; line-height: 1.4; min-height: 2.8em; }
 @media print {
   #signatureDialog { display: none !important; }
 }
