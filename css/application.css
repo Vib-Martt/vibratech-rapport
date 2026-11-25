@@ -174,3 +174,47 @@
 #previewPdf:hover{background:#ffca1a}
 #previewPdf:active{background:#f2bd00}
 #previewPdf:focus-visible{outline:3px solid #2456a6;outline-offset:3px}
+
+#ouvrirSignature { display: none; }
+@media screen and (max-width: 932px) and (pointer: coarse) {
+  #ouvrirSignature { display: block; }
+}
+html:has(#signatureDialog[open]) { overflow: hidden; }
+#signatureDialog[open] {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  background: #edf2f6;
+  color: #172c3b;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+}
+#signatureDialog .signature-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+#signatureDialog h2 { margin: 0; }
+#signatureDialog #signatureField {
+  display: grid;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+#signatureDialog #signature { display: block; height: 100%; min-height: 0; }
+#signatureDialog .signature-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+#signatureDialog .signature-actions button { flex: 1 1 auto; padding: 11px 8px; }
+#signatureDialog #signatureStatus { margin: 4px 0 0; }
+#signatureDialog #signatureStatus:empty { margin: 0; }
+@media print {
+  #signatureDialog { display: none !important; }
+}

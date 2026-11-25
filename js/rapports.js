@@ -2,25 +2,70 @@
 const ids=['reference','date','technicien','client','facturation','site','commande','contact','telephone','email','equipement','type','travaux','departVbt','arriveeClient','departClient','arriveeVbt','pause','km','cadenas','marche','continuer','soumission','satisfaction','signataire','dateSignature'];const checkids=['cadenas','marche','continuer','soumission','satisfaction'];const el=id=>document.getElementById(id);let signed=false;
 let signatureData=null,signatureGeneration=0,signatureRendering=false;
 const canvas=el('signature'),ctx=canvas.getContext('2d');
+const signatureDialog=el('signatureDialog'),signatureField=el('signatureField');
+let drawing=false,cropSignature=false;
+
+function canvasHeight(){return canvas.clientHeight ?? 300}
+
+function saveCroppedSignature(){
+ const {width,height}=canvas;
+ const pixels=ctx.getImageData(0,0,width,height).data;
+ let left=width,top=height,right=-1,bottom=-1;
+ for(let y=0;y<height;y++){
+  for(let x=0;x<width;x++){
+   if(!pixels[(y*width+x)*4+3])continue;
+   left=Math.min(left,x);top=Math.min(top,y);
+   right=Math.max(right,x);bottom=Math.max(bottom,y);
+  }
+ }
+ if(right<left)return;
+ const cropped=document.createElement('canvas');
+ const padding=Math.ceil(6*devicePixelRatio);
+ cropped.width=right-left+1+padding*2;
+ cropped.height=bottom-top+1+padding*2;
+ cropped.getContext('2d').drawImage(canvas,left,top,right-left+1,bottom-top+1,
+  padding,padding,right-left+1,bottom-top+1);
+ signatureData=cropped.toDataURL('image/png');
+ signed=true;
+}
+
+function openSignature(){
+ signatureDialog.showModal();
+ signatureDialog.append(signatureField);
+ resize();
+}
+function closeSignature(){
+ if(!signatureDialog.open)return;
+ finish();
+ el('ouvrirSignature').after(signatureField);
+ signatureDialog.close();
+ resize();
+}
+el('ouvrirSignature').onclick=openSignature;
+el('fermerSignature').onclick=closeSignature;
+signatureDialog.addEventListener('cancel',event=>{event.preventDefault();closeSignature()});
 // The stored image is authoritative, including while the Sign tab is hidden.
 function restoreSignature(data){
- signatureData=data||null;signed=!!signatureData;resize();
+ drawing=false;signatureData=data||null;signed=!!signatureData;resize();
 }
 function captureSignature(){signatureGeneration++;signatureRendering=false;signatureData=canvas.toDataURL('image/png');signed=true}
 function resize(){
- const seq=++signatureGeneration,w=canvas.clientWidth;
+ finish();
+ const seq=++signatureGeneration,w=canvas.clientWidth,h=canvasHeight();
  signatureRendering=false;
- if(w<1){ctx.clearRect(0,0,canvas.width,canvas.height);return}
- canvas.width=Math.round(w*devicePixelRatio);canvas.height=Math.round(300*devicePixelRatio);
+ if(w<1||h<1){ctx.clearRect(0,0,canvas.width,canvas.height);return}
+ canvas.width=Math.round(w*devicePixelRatio);canvas.height=Math.round(h*devicePixelRatio);
  ctx.scale(devicePixelRatio,devicePixelRatio);ctx.lineWidth=2.2;ctx.strokeStyle='#183c58';ctx.lineCap='round';ctx.lineJoin='round';
  if(signatureData){
   signatureRendering=true;const image=new Image();
-  image.onload=()=>{if(seq!==signatureGeneration)return;ctx.drawImage(image,0,0,w,300);signatureRendering=false};
+  image.onload=()=>{if(seq!==signatureGeneration)return;const scale=Math.min(w/(image.naturalWidth||w),h/(image.naturalHeight||h));
+   const width=(image.naturalWidth||w)*scale,height=(image.naturalHeight||h)*scale;
+   ctx.drawImage(image,(w-width)/2,(h-height)/2,width,height);signatureRendering=false};
   image.onerror=()=>{if(seq!==signatureGeneration)return;signatureRendering=false;el('signatureStatus').textContent='Signature enregistrée illisible. Réouvrez le rapport ou remplacez la signature.'};
   image.src=signatureData;
  }
 }
-resize();window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined'){new ResizeObserver(()=>{if(canvas.clientWidth>0&&Math.abs(canvas.width-canvas.clientWidth*devicePixelRatio)>1)resize()}).observe(canvas)}document.querySelectorAll('[data-v11-tab], [data-v12-tab], #v11next, #v11prev').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(resize)));let drawing=false;let signatureLocked=false;function pos(e){const r=canvas.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}canvas.addEventListener('pointerdown',e=>{if(signatureLocked||signatureRendering)return;drawing=true;canvas.setPointerCapture(e.pointerId);const [x,y]=pos(e);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+.1,y+.1);ctx.stroke();captureSignature()});canvas.addEventListener('pointermove',e=>{if(signatureLocked||!drawing)return;const [x,y]=pos(e);ctx.lineTo(x,y);ctx.stroke();captureSignature()});function finish(){if(drawing){drawing=false;markDirty()}}canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',finish);function setSignatureLocked(locked){
+window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined'){new ResizeObserver(()=>{if(canvas.clientWidth>0&&(Math.abs(canvas.width-canvas.clientWidth*devicePixelRatio)>1||Math.abs(canvas.height-canvasHeight()*devicePixelRatio)>1))resize()}).observe(canvas)}document.querySelectorAll('[data-v11-tab], [data-v12-tab], #v11next, #v11prev').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(resize)));let signatureLocked=false;function pos(e){const r=canvas.getBoundingClientRect();return [e.clientX-r.left-(canvas.clientLeft||0),e.clientY-r.top-(canvas.clientTop||0)]}canvas.addEventListener('pointerdown',e=>{if(signatureLocked||signatureRendering)return;drawing=true;cropSignature=!!signatureDialog.open;canvas.setPointerCapture(e.pointerId);const [x,y]=pos(e);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+.1,y+.1);ctx.stroke();if(!cropSignature)captureSignature()});canvas.addEventListener('pointermove',e=>{if(signatureLocked||!drawing)return;const [x,y]=pos(e);ctx.lineTo(x,y);ctx.stroke();if(!cropSignature)captureSignature()});function finish(){if(drawing){drawing=false;if(cropSignature)saveCroppedSignature();markDirty()}}canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',finish);function setSignatureLocked(locked){
  signatureLocked=locked;drawing=false;
  el('confirmerSignature').disabled=locked;
  canvas.style.touchAction=locked?'pan-y':'none';
@@ -29,14 +74,16 @@ resize();window.addEventListener('resize',resize);if(typeof ResizeObserver!=='un
 }
 function signatureChanged(){if(!signatureLocked)el('signatureStatus').textContent=signed?'Signature prête à confirmer.':''}
 el('confirmerSignature').onclick=()=>{
+ finish();
  if(!signed){el('signatureStatus').textContent='Signez dans le cadre avant de confirmer.';return}
- setSignatureLocked(true);markDirty();
+ setSignatureLocked(true);markDirty();closeSignature();
 };
 canvas.addEventListener('pointerdown',()=>{if(!signatureLocked)el('signatureStatus').textContent='Signature en cours…'});
 canvas.addEventListener('pointerup',signatureChanged);
 canvas.addEventListener('pointercancel',signatureChanged);
 el('effacerSignature').addEventListener('click',()=>{setSignatureLocked(false);el('signatureStatus').textContent='Signature effacée — vous pouvez signer à nouveau.'});
-el('effacerSignature').onclick=()=>{restoreSignature(null);markDirty()};
+el('effacerSignature').onclick=()=>{drawing=false;restoreSignature(null);markDirty()};
+resize();
 function materialRow(quantity='',description=''){
  if(el('materialsRows').children.length>=10){alert('Maximum de 10 matériaux par rapport.');return;}
  const row=document.createElement('div');row.className='material-row';
