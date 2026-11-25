@@ -6,7 +6,7 @@
  const anchor=document.createElement('div');anchor.id='v12anchor';menu.before(anchor);
  const KEY='vibratech_main_tab_v12';
  function openPanel(which,scroll=true){
-  if(!['rapport','clients','historique','synchronisation','exports'].includes(which))which='rapport';
+  if(!tabs.some(tab=>tab.dataset.v12Tab===which))which='rapport';
   tabs.forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v12Tab===which)));
   panels.forEach(p=>{p.hidden=p.dataset.v12Panel!==which});
   try{localStorage.setItem(KEY,which)}catch(e){}
